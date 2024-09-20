@@ -5,7 +5,7 @@ const ContactButton = () => {
 	return (
 		<section className="py-16">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<div className="lg:py-14 lg:px-20 p-10 rounded-2xl bg-gradient-to-r from-orange-600 to-[#FF4D30] flex items-center justify-between flex-col lg:flex-row">
+				<div className="lg:py-14 lg:px-20 p-10 rounded-2xl bg-gradient-to-r from-gray-600 to-black flex items-center justify-between flex-col lg:flex-row">
 					<div className="block text-center mb-5 lg:text-left lg:mb-0">
 						<h2 className="font-manrope text-4xl text-white font-semibold mb-5 lg:mb-2">
 							Connect with us
@@ -16,7 +16,7 @@ const ContactButton = () => {
 					</div>
 					<Link
 						href="/contact"
-						className="flex items-center gap-2 bg-white rounded-full shadow-sm text-lg text-orange-600 font-semibold py-4 px-8 transition-all duration-500">
+						className="flex items-center gap-2 bg-white rounded-full shadow-sm text-lg text-gray-600 font-semibold py-4 px-8 transition-all duration-500">
 						Get In Touch
 						<svg
 							width={19}

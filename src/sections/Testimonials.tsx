@@ -49,7 +49,7 @@ const Testimonials = () => {
 	return (
 		<section className="">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<h6 className="text-lg text-orange-600 font-medium text-center mb-2 leading-7">
+				<h6 className="text-lg text-gray-600 font-medium text-center mb-2 leading-7">
 					Reviews
 				</h6>
 				<h2 className="font-manrope capitalize font-bold text-4xl text-black mb-8 text-center max-lg:text-center">
@@ -61,7 +61,7 @@ const Testimonials = () => {
 							<div
 								key={item.name}
 								className="border border-black/10 p-3 rounded-xl">
-								<div className="text-orange-500 flex gap-1 items-center py-3">
+								<div className="text-gray-500 flex gap-1 items-center py-3">
 									<BsStarFill />
 									<BsStarFill />
 									<BsStarFill />

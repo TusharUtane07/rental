@@ -29,7 +29,7 @@ const Faq = () => {
 		<section className="w-full xl:py-28 lg:py-20 py-12">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="lg:mb-16 mb-10">
-					<h6 className="text-lg text-orange-600 font-medium text-center mb-2 leading-7">
+					<h6 className="text-lg text-gray-600 font-medium text-center mb-2 leading-7">
 						FAQs
 					</h6>
 					<h2 className="lg:text-4xl text-3xl font-manrope text-center font-bold text-gray-900 leading-tight">
