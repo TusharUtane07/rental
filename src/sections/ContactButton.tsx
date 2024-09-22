@@ -10,7 +10,7 @@ const ContactButton = () => {
 						<h2 className="font-manrope text-4xl text-white font-semibold mb-5 lg:mb-2">
 							Connect with us
 						</h2>
-						<p className="text-xl text-indigo-100">
+						<p className="text-xl text-gray-100">
 							Contact us with any query or any idea.
 						</p>
 					</div>
@@ -26,7 +26,7 @@ const ContactButton = () => {
 							xmlns="http://www.w3.org/2000/svg">
 							<path
 								d="M1.75 7L16.4167 7M11.8333 12.5L16.6852 7.64818C16.9907 7.34263 17.1435 7.18985 17.1435 7C17.1435 6.81015 16.9907 6.65737 16.6852 6.35182L11.8333 1.5"
-								stroke="#FF4D30"
+								stroke="gray"
 								strokeWidth="2.4"
 								strokeLinecap="round"
 								strokeLinejoin="round"
