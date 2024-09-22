@@ -33,7 +33,7 @@ const GotoTopButton = () => {
 				<IoMdArrowDropupCircle
 					onClick={scrollToTop}
 					size={50}
-					className="cursor-pointer text-gray-500"
+					className="cursor-pointer text-gray-600"
 				/>
 			)}
 		</div>
