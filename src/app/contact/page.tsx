@@ -1,38 +1,8 @@
 "use client";
-
 import Faq from "@/sections/Faq";
-import React, { useState } from "react";
-
-const faqData = [
-	{
-		question: "How can I reset my password?",
-		answer:
-			'To reset your password, go to the login page and click on the "Forgot password" link. Enter the email address associated with your account, and you will receive an email with instructions on how to reset your password. Follow the instructions to create a new password.',
-	},
-	{
-		question: "How do I change my privacy settings?",
-		answer:
-			'To change your privacy settings, navigate to your account settings and select "Privacy Settings." From there, you can adjust who can see your information and activity.',
-	},
-	{
-		question: "What is the payment process?",
-		answer:
-			"Our payment process is simple: choose your product, proceed to checkout, and enter your payment details. We accept credit cards, PayPal, and other online payment methods.",
-	},
-	{
-		question: "How do I find my purchase history?",
-		answer:
-			'You can find your purchase history by logging into your account and going to the "Order History" section. Here you will see a list of all your past purchases.',
-	},
-];
+import React from "react";
 
 const Contact = () => {
-	const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-	const toggleAccordion = (index: number) => {
-		setActiveIndex(activeIndex === index ? null : index);
-	};
-
 	return (
 		<>
 			<section className="w-full py-40 bg-slate-50 border-b border-gray-300">

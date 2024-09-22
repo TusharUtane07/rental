@@ -18,7 +18,7 @@ const Register = () => {
 		password: "",
 	});
 	const [loading, setLoading] = useState<boolean>(false);
-
+	const [errors, setErrors] = useState<Partial<RegisterFormData>>({});
 	const router = useRouter();
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,11 +27,38 @@ const Register = () => {
 			...formData,
 			[name]: value,
 		});
+		setErrors({ ...errors, [name]: "" });
+	};
+
+	const validateForm = (): boolean => {
+		let valid = true;
+		let newErrors: Partial<RegisterFormData> = {};
+
+		if (!formData.username) {
+			newErrors.username = "Username is required.";
+			valid = false;
+		}
+		if (!formData.email) {
+			newErrors.email = "Email is required.";
+			valid = false;
+		}
+		if (!formData.password) {
+			newErrors.password = "Password is required.";
+			valid = false;
+		}
+
+		setErrors(newErrors);
+		return valid;
 	};
 
 	const registerUser = async (e: FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
+
+		if (!validateForm()) {
+			setLoading(false);
+			return;
+		}
 
 		try {
 			const response = await axiosInstance.post("/api/register/", {
@@ -58,7 +85,7 @@ const Register = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-5 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 					Create your account
@@ -79,11 +106,13 @@ const Register = () => {
 									id="username"
 									name="username"
 									type="text"
-									required
 									value={formData.username}
 									onChange={handleInputChange}
 									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-gray focus:border-gray-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
 								/>
+								{errors.username && (
+									<p className="text-red-600 text-sm p-2">{errors.username}</p>
+								)}
 							</div>
 						</div>
 
@@ -98,11 +127,13 @@ const Register = () => {
 									id="email"
 									name="email"
 									type="email"
-									required
 									value={formData.email}
 									onChange={handleInputChange}
 									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-gray focus:border-gray-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
 								/>
+								{errors.email && (
+									<p className="text-red-600 text-sm p-2">{errors.email}</p>
+								)}
 							</div>
 						</div>
 
@@ -117,11 +148,13 @@ const Register = () => {
 									id="password"
 									name="password"
 									type="password"
-									required
 									value={formData.password}
 									onChange={handleInputChange}
 									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-gray focus:border-gray-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
 								/>
+								{errors.password && (
+									<p className="text-red-600 text-sm p-2">{errors.password}</p>
+								)}
 							</div>
 						</div>
 

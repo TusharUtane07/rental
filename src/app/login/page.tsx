@@ -5,17 +5,18 @@ import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 
-interface SignInFormData {
+interface LogInFormData {
 	email: string;
 	password: string;
 }
 
 const SignIn: React.FC = () => {
-	const [formData, setFormData] = useState<SignInFormData>({
+	const [formData, setFormData] = useState<LogInFormData>({
 		email: "",
 		password: "",
 	});
 	const [loading, setLoading] = useState<boolean>(false);
+	const [errors, setErrors] = useState<Partial<LogInFormData>>({});
 
 	const router = useRouter();
 
@@ -25,12 +26,60 @@ const SignIn: React.FC = () => {
 			...formData,
 			[name]: value,
 		});
+		setErrors({ ...errors, [name]: "" });
 	};
 
-	const LoginInUser = async (e: FormEvent) => {};
+	const validateForm = (): boolean => {
+		let valid = true;
+		let newErrors: Partial<LogInFormData> = {};
+
+		if (!formData.email) {
+			newErrors.email = "Email is required.";
+			valid = false;
+		}
+		if (!formData.password) {
+			newErrors.password = "Password is required.";
+			valid = false;
+		}
+
+		setErrors(newErrors);
+		return valid;
+	};
+
+	const LoginInUser = async (e: FormEvent) => {
+		e.preventDefault();
+		setLoading(true);
+
+		if (!validateForm()) {
+			setLoading(false);
+			return;
+		}
+
+		try {
+			const response = await axiosInstance.post("/api/login/", {
+				email: formData.email,
+				password: formData.password,
+			});
+
+			const data = await response.data;
+
+			if (data.result) {
+				toast.success("Logged in successfully!");
+				router.push("/");
+			}
+		} catch (error: any) {
+			if (error.response && error.response.data) {
+				toast.error(error.response.data.message || "An error occurred.");
+			} else {
+				toast.error("User login failed.");
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-5 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<h2 className="text-center text-3xl leading-9 font-extrabold text-gray-900">
 					Login to your account
@@ -51,11 +100,13 @@ const SignIn: React.FC = () => {
 									id="email"
 									name="email"
 									type="email"
-									required
 									value={formData.email}
 									onChange={handleInputChange}
 									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-gray focus:border-gray-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
 								/>
+								{errors.email && (
+									<p className="text-red-600 text-sm p-2">{errors.email}</p>
+								)}
 							</div>
 						</div>
 
@@ -70,11 +121,13 @@ const SignIn: React.FC = () => {
 									id="password"
 									name="password"
 									type="password"
-									required
 									value={formData.password}
 									onChange={handleInputChange}
 									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-gray focus:border-gray-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
 								/>
+								{errors.password && (
+									<p className="text-red-600 text-sm p-2">{errors.password}</p>
+								)}
 							</div>
 						</div>
 
