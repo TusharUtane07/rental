@@ -51,7 +51,9 @@ const LogoCard = () => {
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-2  xl:grid-cols-4">
 					{logosGrid.map((item) => {
 						return (
-							<div className="flex justify-center items-center border border-solid border-gray-200 shadow-sm h-24 rounded-2xl">
+							<div
+								key={item.id}
+								className="flex justify-center items-center border border-solid border-gray-200 shadow-sm h-24 rounded-2xl">
 								<Image
 									src={item.image}
 									alt="Brand logo"

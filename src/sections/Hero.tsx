@@ -16,7 +16,7 @@ const Hero = () => {
 				<Link
 					href="/register"
 					className="w-full md:w-auto mb-14 inline-flex items-center justify-center py-3 px-7 text-base font-semibold text-center text-white rounded-full bg-gray-600 shadow-xs hover:bg-gray-700 transition-all duration-500">
-					Create an account
+					Get Started
 					<svg
 						className="ml-2"
 						width={20}

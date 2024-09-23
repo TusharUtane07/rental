@@ -33,9 +33,8 @@ export default function RootLayout({
 				<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
 			</head>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+				className={`${geistSans.variable} ${geistMono.variable} antialiased lg:pt-20 pt-16`}>
 				<Header />
-				<div className="lg:pt-20 pt-16"></div>
 				{children}
 				<GotoTopButton />
 				<Toaster />
