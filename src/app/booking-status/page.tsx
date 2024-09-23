@@ -19,6 +19,8 @@ interface BookingDetail {
 const BookingStatus: React.FC = () => {
 	const [bookingDetails, setBookingDetails] = useState<BookingDetail[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [userName, setUserName] = useState<string>("");
+	const [userId, setUserId] = useState<string>("");
 
 	const router = useRouter();
 
@@ -28,7 +30,6 @@ const BookingStatus: React.FC = () => {
 			const data = response.data;
 
 			if (data.result) {
-				console.log(data);
 				setBookingDetails(data.data);
 			} else {
 				toast.error("Some Technical Error Occurred");
@@ -43,46 +44,65 @@ const BookingStatus: React.FC = () => {
 	const handleDelete = async (id: string) => {
 		try {
 			if (!id) {
-				console.log("Invalid Id");
-				toast.error("Server Error Occured");
+				toast.error("Server Error Occurred");
 				return;
 			}
 
 			const response = await axiosInstance.delete(`/api/book-car/${id}`);
 
 			if (response.data.result) {
-				toast.success("Booking Deleted");
 				window.location.reload();
 			} else {
-				toast.error("Error Occured");
+				toast.error("Error Occurred");
 			}
 		} catch (error: any) {
 			toast.error(error.message);
 		}
 	};
 
+	const getUserDetails = async () => {
+		try {
+			const response = await axiosInstance.get("/api/user-details/");
+			const data = response.data;
+			if (data.result) {
+				setUserId(data.data._id);
+				setUserName(data.data.username);
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	};
+
 	useEffect(() => {
-		getBookingDetails();
+		getUserDetails();
 	}, []);
+
+	useEffect(() => {
+		if (userId) {
+			getBookingDetails();
+		} else if (!loading) {
+			toast.error("Please Login First");
+			router.push("/login");
+		}
+	}, [userId, loading]);
 
 	if (loading) {
 		return <div className="text-3xl">Loading...</div>;
 	}
+
 	return (
-		<div
-			className="booking-status my-20
-        ">
+		<div className="booking-status my-20">
 			{bookingDetails.length > 0 ? (
 				<div className="relative overflow-x-auto sm:rounded-lg">
-					<table className="max-w-7xl mx-auto w-full text-sm text-left rtl:text-right text-gray-500 ">
-						<caption className="p-5 text-2xl font-semibold text-left rtl:text-right text-gray-900 bg-white  ">
-							Booking Status
-							<p className="mt-1 text-sm font-normal text-gray-500 ">
-								You have this car bookings you can check status here you can
-								confirm booking or cancel the bookings
+					<table className="max-w-7xl mx-auto w-full text-sm text-left rtl:text-right text-gray-500">
+						<caption className="p-5 text-2xl capitalize font-semibold text-left rtl:text-right text-gray-900 bg-white">
+							<p>Hi {userName && userName}, </p> Booking Status
+							<p className="mt-1 text-sm font-normal text-gray-500">
+								You have these car bookings. You can check the status here,
+								confirm bookings, or cancel them.
 							</p>
 						</caption>
-						<thead className="text-xs mt-10 text-gray-700 uppercase bg-gray-50  ">
+						<thead className="text-xs mt-10 text-gray-700 uppercase bg-gray-50">
 							<tr>
 								<th scope="col" className="px-6 py-3">
 									Car Type
@@ -94,13 +114,13 @@ const BookingStatus: React.FC = () => {
 									Pick Up
 								</th>
 								<th scope="col" className="px-6 py-3">
-									Drop Off
+									Drop Off City
 								</th>
 								<th scope="col" className="px-6 py-3">
-									Drop Off
+									Pick Up Date
 								</th>
 								<th scope="col" className="px-6 py-3">
-									Drop Off
+									Drop Off Date
 								</th>
 								<th scope="col" className="px-6 py-3">
 									Status
@@ -115,7 +135,7 @@ const BookingStatus: React.FC = () => {
 								<tr className="bg-white border-b">
 									<th
 										scope="row"
-										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
 										{booking.carType}
 									</th>
 									<td className="px-6 py-4">
@@ -135,7 +155,7 @@ const BookingStatus: React.FC = () => {
 										{booking.dropoffDate}
 									</td>
 									<td className="px-6 py-4 text-start capitalize">
-										<p className="my-3">{booking.status}</p>{" "}
+										<p className="my-3">{booking.status}</p>
 										<button
 											onClick={() =>
 												router.push(`/confirm-booking/${booking._id}`)

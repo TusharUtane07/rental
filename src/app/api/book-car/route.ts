@@ -7,7 +7,7 @@ export const POST = async (request: NextRequest) => {
     try {
         await dbConnect();
         const requestBody = await request.json();
-        const { carType, pickupCity, dropoffCity, pickupDate, dropoffDate, carImageUrl, status } = requestBody;
+        const { carType, pickupCity, dropoffCity, pickupDate, dropoffDate, carImageUrl, status, userId } = requestBody;
 
         const newBooking = new Booking({
             carType,
@@ -17,6 +17,7 @@ export const POST = async (request: NextRequest) => {
             dropoffDate,
             carImageUrl,
             status,
+            userId
         });
 
         const savedBooking = await newBooking.save();

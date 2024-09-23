@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectInput from "@/components/SelectInput";
 import { DatePicker } from "antd";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,8 @@ interface Errors {
 
 const Booking = () => {
 	const router = useRouter();
+
+	const [userId, setUserId] = useState<string>("");
 
 	const carImages: Record<string, string> = {
 		"Aston Martin DBX":
@@ -131,39 +133,60 @@ const Booking = () => {
 		return isValid;
 	};
 
-	const handleSubmit = async () => {
-		if (validateForm()) {
-			const selectedCarType = formValues.carType;
-			const carImageUrl = carImages[selectedCarType];
-
-			try {
-				const response = await axiosInstance.post("/api/book-car/", {
-					carType: formValues.carType,
-					pickupCity: formValues.pickupCity,
-					dropoffCity: formValues.dropoffCity,
-					pickupDate: formValues.pickupDate,
-					dropoffDate: formValues.dropoffDate,
-					carImageUrl: carImageUrl,
-					status: "pending",
-				});
-
-				if (response.data.result) {
-					toast.success("Booking details added, proceeding further");
-					router.push("/booking-status");
-					setFormValues({
-						carType: "",
-						pickupCity: "",
-						dropoffCity: "",
-						pickupDate: "",
-						dropoffDate: "",
-					});
-				} else {
-					toast.error("Error booking car. Please try again.");
-				}
-			} catch (error) {
-				toast.error("An unexpected error occurred. Please try again.");
-				console.error("Error booking car:", error);
+	const getUserDetails = async () => {
+		try {
+			const response = await axiosInstance.get("/api/user-details/");
+			const data = response.data;
+			if (data.result) {
+				setUserId(data.data._id);
 			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	};
+	console.log(userId);
+	useEffect(() => {
+		getUserDetails();
+	}, [userId]);
+
+	const handleSubmit = async () => {
+		if (userId?.length > 1) {
+			if (validateForm()) {
+				const selectedCarType = formValues.carType;
+				const carImageUrl = carImages[selectedCarType];
+				try {
+					const response = await axiosInstance.post("/api/book-car/", {
+						carType: formValues.carType,
+						pickupCity: formValues.pickupCity,
+						dropoffCity: formValues.dropoffCity,
+						pickupDate: formValues.pickupDate,
+						dropoffDate: formValues.dropoffDate,
+						carImageUrl: carImageUrl,
+						status: "pending",
+						userId,
+					});
+
+					if (response.data.result) {
+						toast.success("Booking details added, proceeding further");
+						router.push("/booking-status");
+						setFormValues({
+							carType: "",
+							pickupCity: "",
+							dropoffCity: "",
+							pickupDate: "",
+							dropoffDate: "",
+						});
+					} else {
+						toast.error("Error booking car. Please try again.");
+					}
+				} catch (error) {
+					toast.error("An unexpected error occurred. Please try again.");
+					console.error("Error booking car:", error);
+				}
+			}
+		} else {
+			toast.error("Please login before Booking");
+			router.push("/login");
 		}
 	};
 

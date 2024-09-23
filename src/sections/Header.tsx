@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { usePathname } from "next/navigation";
+import axiosInstance from "@/lib/axios";
 const Header = () => {
 	const [nav, setNav] = useState(false);
+	const [userName, setUserName] = useState<string>("");
 	const handleNav = () => {
 		setNav(!nav);
 	};
@@ -19,11 +21,29 @@ const Header = () => {
 		{ id: 5, text: "Contact", link: "/contact" },
 	];
 
+	const getUserDetails = async () => {
+		try {
+			const response = await axiosInstance.get("/api/user-details/");
+			const data = response.data;
+			if (data.result) {
+				setUserName(data.data.username);
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	};
+
+	const signOut = async () => {};
+
+	useEffect(() => {
+		getUserDetails();
+	}, []);
+
 	return (
 		<div className="fixed top-0 left-0 right-0 backdrop-blur-2xl shadow-md z-50">
 			<div className="flex justify-between items-center h-16 lg:h-20 max-w-[1240px] mx-auto px-4">
 				<h1 className="text-3xl font-bold">Next Ride</h1>
-				<ul className="hidden md:flex">
+				<ul className="hidden md:flex md:items-center">
 					{navItems.map((item) => (
 						<Link
 							href={item.link}
@@ -38,6 +58,16 @@ const Header = () => {
 						</Link>
 					))}
 				</ul>
+				<div className="font-bold capitalize md:flex hidden">
+					{userName && (
+						<div className="flex items-center gap-3">
+							<p>Hi, {userName}</p>{" "}
+							<button className="bg-gray-600 px-3 py-2 text-white rounded-full">
+								Logout
+							</button>
+						</div>
+					)}
+				</div>
 				<div onClick={handleNav} className="block md:hidden">
 					{nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
 				</div>
@@ -63,6 +93,16 @@ const Header = () => {
 						{item.text}
 					</Link>
 				))}
+				<div className="font-bold capitalize md:hidden flex">
+					{userName && (
+						<div className="flex items-center flex-col mt-5 gap-3">
+							<p>Hi, {userName}</p>{" "}
+							<button className="bg-gray-600 px-8 py-2 text-white rounded-full">
+								Logout
+							</button>
+						</div>
+					)}
+				</div>
 			</ul>
 		</div>
 	);

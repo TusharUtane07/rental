@@ -2,7 +2,7 @@
 import axiosInstance from "@/lib/axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface RegisterFormData {
@@ -83,6 +83,22 @@ const Register = () => {
 			setLoading(false);
 		}
 	};
+
+	const getUserDetails = async () => {
+		try {
+			const response = await axiosInstance.get("/api/user-details/");
+			const data = response.data;
+			if (data.result) {
+				router.push("/");
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	};
+
+	useEffect(() => {
+		getUserDetails();
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-5 sm:px-6 lg:px-8">

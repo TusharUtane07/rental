@@ -8,6 +8,7 @@ export interface Booking extends Document {
     dropoffDate: string;
     carImageUrl: string;
     status: string;
+    userId: string;
 }
 
 const BookingSchema = new Schema<Booking>({
@@ -36,6 +37,10 @@ const BookingSchema = new Schema<Booking>({
         required: [true, "Car Type is required"],
     },
     status: {
+        type: String,
+        required: [true, "Status is required"],
+    },
+    userId: {
         type: String,
         required: [true, "Status is required"],
     },
