@@ -65,6 +65,7 @@ const SignIn: React.FC = () => {
 
 			if (data.result) {
 				toast.success("Logged in successfully!");
+				window.location.reload();
 				router.push("/");
 			}
 		} catch (error: any) {

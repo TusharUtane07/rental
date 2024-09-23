@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { usePathname } from "next/navigation";
 import axiosInstance from "@/lib/axios";
+import toast from "react-hot-toast";
 const Header = () => {
 	const [nav, setNav] = useState(false);
 	const [userName, setUserName] = useState<string>("");
@@ -33,11 +34,22 @@ const Header = () => {
 		}
 	};
 
-	const signOut = async () => {};
+	const signOut = async () => {
+		try {
+			const response = await axiosInstance.get("/api/logout/");
+			const data = response.data;
+			if (data.result) {
+				toast.success("Logout Successfully");
+				window.location.reload();
+			}
+		} catch (error: any) {
+			toast.error(error.message);
+		}
+	};
 
 	useEffect(() => {
 		getUserDetails();
-	}, []);
+	}, [userName]);
 
 	return (
 		<div className="fixed top-0 left-0 right-0 backdrop-blur-2xl shadow-md z-50">
@@ -59,12 +71,23 @@ const Header = () => {
 					))}
 				</ul>
 				<div className="font-bold capitalize md:flex hidden">
-					{userName && (
+					{userName ? (
 						<div className="flex items-center gap-3">
 							<p>Hi, {userName}</p>{" "}
-							<button className="bg-gray-600 px-3 py-2 text-white rounded-full">
+							<button
+								onClick={signOut}
+								className="bg-gray-600 px-3 py-2 text-white rounded-full">
 								Logout
 							</button>
+						</div>
+					) : (
+						<div className="font-bold capitalize hidden md:flex ">
+							<Link
+								onClick={() => setNav(!nav)}
+								href={"/login"}
+								className="bg-gray-600 px-8 py-2 text-white rounded-full">
+								Login
+							</Link>
 						</div>
 					)}
 				</div>
@@ -94,12 +117,23 @@ const Header = () => {
 					</Link>
 				))}
 				<div className="font-bold capitalize md:hidden flex">
-					{userName && (
+					{userName ? (
 						<div className="flex items-center flex-col mt-5 gap-3">
 							<p>Hi, {userName}</p>{" "}
-							<button className="bg-gray-600 px-8 py-2 text-white rounded-full">
+							<button
+								onClick={signOut}
+								className="bg-gray-600 px-8 py-2 text-white rounded-full">
 								Logout
 							</button>
+						</div>
+					) : (
+						<div className="font-bold capitalize md:hidden flex mt-5">
+							<Link
+								onClick={() => setNav(!nav)}
+								href={"/login"}
+								className="bg-gray-600 px-8 py-2 text-white rounded-full">
+								Login
+							</Link>
 						</div>
 					)}
 				</div>

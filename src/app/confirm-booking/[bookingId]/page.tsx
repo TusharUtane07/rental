@@ -1,7 +1,9 @@
 "use client";
 import axiosInstance from "@/lib/axios";
 import Image from "next/image";
-import React, { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { AiFillInfoCircle } from "react-icons/ai";
 
 // Define types for booking details
@@ -27,12 +29,16 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 		null
 	);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [userId, setUserId] = useState<string>("");
+	const [userName, setUserName] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 
 	const bookingId = params?.bookingId;
 
-	// API call to fetch booking details
-	const getBookingDetails = useCallback(async () => {
+	const router = useRouter();
+
+	// Fetch Booking Details
+	const getBookingDetails = async () => {
 		if (!bookingId) {
 			setError("Invalid booking ID");
 			setLoading(false);
@@ -45,26 +51,55 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 
 			if (data.result) {
 				setBookingDetails(data.data);
-				setError(null); // Reset any previous errors
-				console.log("Booking fetched");
+				setError(null);
 			} else {
 				setError("Error fetching booking details");
-				console.log("Error fetching booking details");
 			}
 		} catch (err: any) {
 			setError("An error occurred while fetching booking details");
-			console.log(err);
 		} finally {
 			setLoading(false);
 		}
-	}, [bookingId]);
+	};
 
-	// Fetch booking details on component mount
+	// Fetch User Details
+	const getUserDetails = async () => {
+		try {
+			const response = await axiosInstance.get("/api/user-details/");
+			const data = response.data;
+			if (data.result) {
+				setUserId(data.data._id);
+				setUserName(data.data.username);
+			} else {
+				setUserId("");
+			}
+		} catch (error: any) {
+			setUserId(""); // Handle missing or invalid user data
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// Redirect if not logged in
 	useEffect(() => {
-		getBookingDetails();
-	}, [getBookingDetails]);
+		if (!loading && !userId) {
+			toast.error("Please Login First");
+			router.push("/login");
+		}
+	}, [loading, userId]);
 
-	// Conditional rendering
+	// Fetch user data on mount
+	useEffect(() => {
+		getUserDetails();
+	}, []);
+
+	// Fetch booking details once user is loaded
+	useEffect(() => {
+		if (userId) {
+			getBookingDetails();
+		}
+	}, [userId]);
+
 	if (loading) {
 		return <p>Loading booking details...</p>;
 	}
@@ -110,6 +145,14 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 									</tr>
 								</thead>
 								<tbody>
+									<tr className="bg-white border-b">
+										<th
+											scope="row"
+											className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+											Username
+										</th>
+										<td className="px-6 py-4">{userName}</td>
+									</tr>
 									<tr className="bg-white border-b">
 										<th
 											scope="row"
