@@ -53,7 +53,7 @@ const CheckoutPage = ({
 			elements,
 			clientSecret,
 			confirmParams: {
-				return_url: `http://www.localhost:3000/payment-success?bookingId=${bookingId}&amount=${amount}`,
+				return_url: `https://nextride-pi.vercel.app/payment-success?bookingId=${bookingId}&amount=${amount}`,
 			},
 		});
 
