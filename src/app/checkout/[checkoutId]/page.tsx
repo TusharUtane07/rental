@@ -5,7 +5,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckOutPage from "@/sections/CheckOutPage";
 import convertToSubcurrency from "@/lib/convertToSubcurrency";
 
-const Checkout = () => {
+const Checkout = ({ params }: any) => {
+	const bookingId = params.checkoutId;
+
 	if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 		throw new Error("Next public stripe key is undefined");
 	}
@@ -22,7 +24,7 @@ const Checkout = () => {
 						amount: convertToSubcurrency(amount),
 						currency: "usd",
 					}}>
-					<CheckOutPage amount={amount} />
+					<CheckOutPage amount={amount} bookingId={bookingId} />
 				</Elements>
 			}
 		</div>

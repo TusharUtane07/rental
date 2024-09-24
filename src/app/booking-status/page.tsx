@@ -170,7 +170,9 @@ const BookingStatus: React.FC = () => {
 												router.push(`/confirm-booking/${booking._id}`)
 											}
 											className="bg-gray-600 text-white px-2 py-2 w-full rounded-md">
-											Confirm Booking
+											{booking.status === "pending"
+												? "Confirm Booking"
+												: "Check details"}
 										</button>
 									</td>
 									<td className="px-6 py-4 capitalize">

@@ -5,6 +5,7 @@ import { DatePicker } from "antd";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
+import dayjs from "dayjs";
 
 interface FormValues {
 	carType: string;
@@ -88,10 +89,23 @@ const Booking = () => {
 		dateString: string,
 		field: keyof FormValues
 	) => {
+		if (field === "pickupDate") {
+			const today = new Date();
+			const selectedDate = new Date(dateString);
+			if (selectedDate < today) {
+				setErrors((prevErrors) => ({
+					...prevErrors,
+					[field]: "Pickup date must be today or in the future",
+				}));
+				return;
+			}
+		}
+
 		setFormValues((prevValues) => ({
 			...prevValues,
 			[field]: dateString,
 		}));
+
 		setErrors((prevErrors) => ({
 			...prevErrors,
 			[field]: "",
@@ -238,6 +252,9 @@ const Booking = () => {
 					<div className="flex flex-col p-2 gap-2">
 						<label htmlFor="pickupDate">Pick up date</label>
 						<DatePicker
+							disabledDate={(current) =>
+								current && current < dayjs().startOf("day")
+							}
 							onChange={(date, dateString) =>
 								handleDateChange(date, String(dateString), "pickupDate")
 							}

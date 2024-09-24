@@ -42,3 +42,32 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         return NextResponse.json({ error: error.message, result: false }, { status: 500 });
     }
 }
+
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        await dbConnect();
+        const { id } = params;
+
+        if (!id || !isValidObjectId(id)) {
+            return NextResponse.json({ message: "Invalid booking ID", result: false }, { status: 400 });
+        }
+
+        const body = await request.json();
+        const { status } = body;
+
+        if (!status) {
+            return NextResponse.json({ message: "Status field is required", result: false }, { status: 400 });
+        }
+
+        const updatedBooking = await Booking.findByIdAndUpdate(id, { status }, { new: true });
+
+        if (!updatedBooking) {
+            return NextResponse.json({ message: "Booking not found", result: false }, { status: 404 });
+        }
+
+        return NextResponse.json({ message: "Booking status updated successfully", result: true, data: updatedBooking }, { status: 200 });
+    } catch (error: any) {
+        console.log(error);
+        return NextResponse.json({ error: error.message, result: false }, { status: 500 });
+    }
+}

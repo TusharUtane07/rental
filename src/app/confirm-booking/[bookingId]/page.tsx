@@ -141,9 +141,27 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			toast.error("Please fill out all required fields.");
 			return;
 		}
+		router.push(`/checkout/${bookingId}`);
+	};
 
-		toast.success("Checkout successful!");
-		router.push("/checkout");
+	const cancelBooking = async () => {
+		try {
+			if (!bookingId) {
+				toast.error("Server Error Occurred");
+				return;
+			}
+
+			const response = await axiosInstance.delete(`/api/book-car/${bookingId}`);
+
+			if (response.data.result) {
+				toast.success("Booking cancelled");
+				router.push("/booking-status");
+			} else {
+				toast.error("Error Occurred");
+			}
+		} catch (error: any) {
+			toast.error(error.message);
+		}
 	};
 
 	if (loading) {
@@ -294,8 +312,10 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 				</div>
 				<button
 					className="text-center font-bold uppercase w-full md:w-auto text-white rounded-md p-2 md:px-5 text-md bg-gray-600"
-					onClick={handleCheckout}>
-					Checkout
+					onClick={
+						bookingDetails.status === "pending" ? handleCheckout : cancelBooking
+					}>
+					{bookingDetails.status === "pending" ? "Checkout" : "Cancel Booking"}
 				</button>
 			</div>
 		</section>
