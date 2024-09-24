@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import {
 	useStripe,
@@ -20,6 +18,7 @@ const CheckoutPage = ({
 	const [errorMessage, setErrorMessage] = useState<string>();
 	const [clientSecret, setClientSecret] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [copyMessage, setCopyMessage] = useState("");
 
 	useEffect(() => {
 		fetch("/api/create-payment-intent", {
@@ -58,15 +57,22 @@ const CheckoutPage = ({
 		});
 
 		if (error) {
-			// This point is only reached if there's an immediate error when
-			// confirming the payment. Show the error to your customer (for example, payment details incomplete)
 			setErrorMessage(error.message);
 		} else {
 			// The payment UI automatically closes with a success animation.
-			// Your customer is redirected to your `return_url`.
 		}
 
 		setLoading(false);
+	};
+
+	const copyNumber = async () => {
+		try {
+			await navigator.clipboard.writeText("4242 4242 4242 4242");
+			setCopyMessage("Card number copied to clipboard!");
+			setTimeout(() => setCopyMessage(""), 3000); // Clear message after 3 seconds
+		} catch (err) {
+			setCopyMessage("Failed to copy!");
+		}
 	};
 
 	if (!clientSecret || !stripe || !elements) {
@@ -87,8 +93,24 @@ const CheckoutPage = ({
 		<form onSubmit={handleSubmit} className="bg-white p-2 rounded-md">
 			{clientSecret && <PaymentElement />}
 
-			{errorMessage && <div>{errorMessage}</div>}
-
+			{errorMessage && <div className="mt-3">{errorMessage}</div>}
+			{copyMessage && <div className="mt-3 text-green-500">{copyMessage}</div>}
+			<div className="capitalize m-6 border-2 border-gray-600 p-4 rounded-xl">
+				<p className="text-xl">for testing you can use:</p>
+				<div className="border-t my-2 font-medium flex flex-col gap-2 p-3 m-5">
+					<p>
+						Card Number: 4242 4242 4242 4242
+						<button
+							type="button"
+							onClick={copyNumber}
+							className="capitalize px-4 py-1 ml-3 rounded-full bg-gray-600 text-white">
+							copy
+						</button>
+					</p>
+					<p>Expiration Date: 03/34 (any future date)</p>
+					<p>CVC: 123 (any 3 digits)</p>
+				</div>
+			</div>
 			<button
 				disabled={!stripe || loading}
 				className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse">

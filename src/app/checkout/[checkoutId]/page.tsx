@@ -15,7 +15,7 @@ const Checkout = ({ params }: any) => {
 	const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 	const amount = 230;
 	return (
-		<div className="mt-40 mx-96">
+		<div className="mt-40 lg:mx-[400px] mx-3 md:mx-20 md:mb-20">
 			{
 				<Elements
 					stripe={stripePromise}
