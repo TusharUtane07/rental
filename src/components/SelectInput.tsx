@@ -5,7 +5,7 @@ import { Select } from "antd";
 interface SelectInputProps {
 	options: { value: string; label: string }[];
 	placeholder: string;
-	onChange: (value: string) => void; // Add onChange prop
+	onChange: (value: string) => void;
 }
 
 const SelectInput: React.FC<SelectInputProps> = ({

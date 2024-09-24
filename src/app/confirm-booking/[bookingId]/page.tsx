@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import axiosInstance from "@/lib/axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -165,7 +166,7 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 	};
 
 	if (loading) {
-		return <p>Loading booking details...</p>;
+		return <Loader />;
 	}
 
 	if (error) {

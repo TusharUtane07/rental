@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
+import Loader from "@/components/Loader";
 
 interface FormValues {
 	carType: string;
