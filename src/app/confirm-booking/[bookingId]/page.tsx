@@ -17,6 +17,17 @@ interface BookingDetails {
 	carImageUrl: string;
 }
 
+interface ConfirmedBookingDetails {
+	firstName: string;
+	lastName: string;
+	phoneNumber: string;
+	age: string;
+	city: string;
+	address: string;
+	email: string;
+	pinCode: string;
+}
+
 interface ConfirmBookingProps {
 	params: {
 		bookingId: string;
@@ -31,6 +42,8 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 	const [userId, setUserId] = useState<string>("");
 	const [userName, setUserName] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
+	const [confirmedDetails, setConfimedDetails] =
+		useState<ConfirmedBookingDetails | null>(null);
 
 	const [formData, setFormData] = useState({
 		firstName: "",
@@ -98,6 +111,19 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 		}
 	};
 
+	const getConfirmedDetails = async () => {
+		try {
+			const response = await axiosInstance.get(
+				`/api/client-details/${bookingId}`
+			);
+			if (response.data.result) {
+				setConfimedDetails(response.data.data);
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	};
+
 	useEffect(() => {
 		if (!loading && !userId) {
 			toast.error("Please Login First");
@@ -112,6 +138,7 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 	useEffect(() => {
 		if (userId) {
 			getBookingDetails();
+			getConfirmedDetails();
 		}
 	}, [userId]);
 
@@ -142,7 +169,28 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			toast.error("Please fill out all required fields.");
 			return;
 		}
-		router.push(`/checkout/${bookingId}`);
+		try {
+			const respone = await axiosInstance.post("/api/client-details/", {
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				phoneNumber: formData.phoneNumber,
+				age: formData.age,
+				email: formData.email,
+				address: formData.address,
+				pinCode: formData.pinCode,
+				city: formData.city,
+				userId,
+				bookingId,
+			});
+
+			if (respone.data.result) {
+				router.push(`/checkout/${bookingId}`);
+			} else {
+				toast.error("Some error occurred");
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
 	};
 
 	const cancelBooking = async () => {
@@ -164,6 +212,7 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			toast.error(error.message);
 		}
 	};
+	console.log(confirmedDetails);
 
 	if (loading) {
 		return <Loader />;
@@ -290,25 +339,124 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 						<h4 className="font-bold text-2xl md:text-3xl text-center">
 							Personal Details
 						</h4>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:my-5 md:p-6">
-							{Object.keys(formData).map((field) => (
-								<div key={field} className="flex flex-col gap-2 capitalize">
-									<label htmlFor={field}>{field}</label>
-									<input
-										type={field === "age" ? "number" : "text"}
-										id={field}
-										className="form-input p-2 border rounded-md"
-										value={formData[field as keyof typeof formData]}
-										onChange={handleInputChange}
-									/>
-									{formErrors[field as keyof typeof formErrors] && (
-										<p className="text-red-500 text-sm">
-											{formErrors[field as keyof typeof formErrors]}
-										</p>
-									)}
-								</div>
-							))}
-						</div>
+						{confirmedDetails ? (
+							<div className="relative overflow-x-auto">
+								<table className=" w-full  mt-10 text-sm text-left rtl:text-right text-gray-500">
+									<thead className="text-xs text-white uppercase bg-gray-600">
+										<tr>
+											<th scope="col" className="px-6 py-3">
+												Field
+											</th>
+											<th scope="col" className="px-6 py-3">
+												Value
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												First Name
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.firstName || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Last Name
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.lastName || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Phone Number
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.phoneNumber || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Age
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.age || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Email
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.email || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												City
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.city || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Address
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.address || "N/A"}
+											</td>
+										</tr>
+										<tr className="bg-white border-b">
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												Pin Code
+											</th>
+											<td className="px-6 py-4">
+												{confirmedDetails.pinCode || "N/A"}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						) : (
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:my-5 md:p-6">
+								{Object.keys(formData).map((field) => (
+									<div key={field} className="flex flex-col gap-2 capitalize">
+										<label htmlFor={field}>{field}</label>
+										<input
+											type={field === "age" ? "number" : "text"}
+											id={field}
+											className="form-input p-2 border rounded-md"
+											value={formData[field as keyof typeof formData]}
+											onChange={handleInputChange}
+										/>
+										{formErrors[field as keyof typeof formErrors] && (
+											<p className="text-red-500 text-sm">
+												{formErrors[field as keyof typeof formErrors]}
+											</p>
+										)}
+									</div>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 				<button
