@@ -18,6 +18,7 @@ const Header = () => {
 		{ id: 1, text: "Home", link: "/" },
 		{ id: 2, text: "Gallery", link: "/car-gallery" },
 		{ id: 3, text: "Models", link: "/car-models" },
+		{ id: 3, text: "Booking Status", link: "/booking-status" },
 		{ id: 4, text: "About", link: "/about" },
 		{ id: 5, text: "Contact", link: "/contact" },
 	];

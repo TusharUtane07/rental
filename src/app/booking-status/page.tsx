@@ -1,9 +1,9 @@
 "use client";
-import axiosInstance from "@/lib/axios";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import toast from "react-hot-toast";
+import axiosInstance from "@/lib/axios";
 
 interface BookingDetail {
 	carImageUrl: string;
@@ -24,6 +24,7 @@ const BookingStatus: React.FC = () => {
 
 	const router = useRouter();
 
+	// Fetch booking details
 	const getBookingDetails = async () => {
 		try {
 			const response = await axiosInstance.get("/api/book-car/");
@@ -35,12 +36,13 @@ const BookingStatus: React.FC = () => {
 				toast.error("Some Technical Error Occurred");
 			}
 		} catch (error) {
-			console.log("error getting details", error);
+			console.log("Error getting booking details", error);
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	// Handle delete operation
 	const handleDelete = async (id: string) => {
 		try {
 			if (!id) {
@@ -60,6 +62,7 @@ const BookingStatus: React.FC = () => {
 		}
 	};
 
+	// Fetch user details
 	const getUserDetails = async () => {
 		try {
 			const response = await axiosInstance.get("/api/user-details/");
@@ -67,16 +70,21 @@ const BookingStatus: React.FC = () => {
 			if (data.result) {
 				setUserId(data.data._id);
 				setUserName(data.data.username);
+			} else {
+				setLoading(false); // Set loading to false if no user is found
 			}
 		} catch (error: any) {
 			console.log(error.message);
+			setLoading(false); // Ensure loading is stopped in case of error
 		}
 	};
 
+	// Fetch user details on component mount
 	useEffect(() => {
 		getUserDetails();
 	}, []);
 
+	// Fetch booking details when user is identified
 	useEffect(() => {
 		if (userId) {
 			getBookingDetails();
@@ -86,6 +94,7 @@ const BookingStatus: React.FC = () => {
 		}
 	}, [userId, loading]);
 
+	// Loading state
 	if (loading) {
 		return <div className="text-3xl">Loading...</div>;
 	}

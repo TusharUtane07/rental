@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AiFillInfoCircle } from "react-icons/ai";
 
-// Define types for booking details
 interface BookingDetails {
 	status: string;
 	pickupCity: string;
@@ -17,7 +16,6 @@ interface BookingDetails {
 	carImageUrl: string;
 }
 
-// Define the type for the component props
 interface ConfirmBookingProps {
 	params: {
 		bookingId: string;
@@ -33,11 +31,31 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 	const [userName, setUserName] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 
-	const bookingId = params?.bookingId;
+	const [formData, setFormData] = useState({
+		firstName: "",
+		lastName: "",
+		phoneNumber: "",
+		age: "",
+		email: "",
+		address: "",
+		city: "",
+		pinCode: "",
+	});
 
+	const [formErrors, setFormErrors] = useState({
+		firstName: "",
+		lastName: "",
+		phoneNumber: "",
+		age: "",
+		email: "",
+		address: "",
+		city: "",
+		pinCode: "",
+	});
+
+	const bookingId = params?.bookingId;
 	const router = useRouter();
 
-	// Fetch Booking Details
 	const getBookingDetails = async () => {
 		if (!bookingId) {
 			setError("Invalid booking ID");
@@ -55,14 +73,13 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			} else {
 				setError("Error fetching booking details");
 			}
-		} catch (err: any) {
+		} catch (err) {
 			setError("An error occurred while fetching booking details");
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Fetch User Details
 	const getUserDetails = async () => {
 		try {
 			const response = await axiosInstance.get("/api/user-details/");
@@ -73,32 +90,61 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			} else {
 				setUserId("");
 			}
-		} catch (error: any) {
-			setUserId(""); // Handle missing or invalid user data
+		} catch (error) {
+			setUserId("");
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Redirect if not logged in
 	useEffect(() => {
 		if (!loading && !userId) {
 			toast.error("Please Login First");
 			router.push("/login");
 		}
-	}, [loading, userId]);
+	}, [loading, userId, router]);
 
-	// Fetch user data on mount
 	useEffect(() => {
 		getUserDetails();
 	}, []);
 
-	// Fetch booking details once user is loaded
 	useEffect(() => {
 		if (userId) {
 			getBookingDetails();
 		}
 	}, [userId]);
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData({ ...formData, [e.target.id]: e.target.value });
+	};
+
+	const validateForm = () => {
+		const errors: Partial<typeof formErrors> = {};
+		let valid = true;
+
+		Object.keys(formData).forEach((field) => {
+			if (!formData[field as keyof typeof formData]) {
+				errors[field as keyof typeof formErrors] = `${field.replace(
+					/([A-Z])/g,
+					" $1"
+				)} is required`;
+				valid = false;
+			}
+		});
+
+		setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
+		return valid;
+	};
+
+	const handleCheckout = async () => {
+		if (!validateForm()) {
+			toast.error("Please fill out all required fields.");
+			return;
+		}
+
+		toast.success("Checkout successful!");
+		router.push("/checkout");
+	};
 
 	if (loading) {
 		return <p>Loading booking details...</p>;
@@ -117,7 +163,6 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<h1 className="bg-gray-600 text-white p-3">Confirm Ride</h1>
 				<div className="bg-gray-200 p-3 rounded-md mt-2">
-					{" "}
 					<p className="flex justify-center text-3xl">
 						<AiFillInfoCircle />
 					</p>
@@ -130,7 +175,6 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 					</p>
 				</div>
 				<div className="my-8 bg-gray-200 p-3 rounded-md md:p-8">
-					{/* Booking details */}
 					<div className="text-lg font-medium flex flex-col gap-2 capitalize  ">
 						<div className="relative overflow-x-auto">
 							<table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -228,86 +272,31 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 							Personal Details
 						</h4>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:my-5 md:p-6">
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="full-name" className="">
-									First Name
-								</label>
-								<input
-									id="full-name"
-									type="text"
-									placeholder="Enter your full name"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="last-name">Last Name</label>
-								<input
-									id="last-name"
-									type="text"
-									placeholder="Enter your last name"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="number">Phone Number</label>
-								<input
-									id="number"
-									type="text"
-									placeholder="Enter your phone number"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="age">Age</label>
-								<input
-									id="age"
-									type="text"
-									placeholder="Enter your age"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="email">Email</label>
-								<input
-									id="email"
-									type="text"
-									placeholder="Enter your email"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="address">Address</label>
-								<input
-									id="address"
-									type="text"
-									placeholder="Enter your address"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="city">City</label>
-								<input
-									id="city"
-									type="text"
-									placeholder="Enter your city"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
-							<div className="flex flex-col gap-1 my-2 mt-5">
-								<label htmlFor="pin-code">Pin Code</label>
-								<input
-									id="pin-code"
-									type="text"
-									placeholder="Enter your full name"
-									className="h-12 px-3 rounded-md outline-none focus:outline-gray-600"
-								/>
-							</div>
+							{Object.keys(formData).map((field) => (
+								<div key={field} className="flex flex-col gap-2 capitalize">
+									<label htmlFor={field}>{field}</label>
+									<input
+										type={field === "age" ? "number" : "text"}
+										id={field}
+										className="form-input p-2 border rounded-md"
+										value={formData[field as keyof typeof formData]}
+										onChange={handleInputChange}
+									/>
+									{formErrors[field as keyof typeof formErrors] && (
+										<p className="text-red-500 text-sm">
+											{formErrors[field as keyof typeof formErrors]}
+										</p>
+									)}
+								</div>
+							))}
 						</div>
-						<button className="bg-gray-600 lg:py-3 text-white rounded-md w-full py-2 mt-3">
-							Confirm Checkout
-						</button>
 					</div>
 				</div>
+				<button
+					className="text-center font-bold uppercase w-full md:w-auto text-white rounded-md p-2 md:px-5 text-md bg-gray-600"
+					onClick={handleCheckout}>
+					Checkout
+				</button>
 			</div>
 		</section>
 	);
