@@ -339,7 +339,7 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 						<h4 className="font-bold text-2xl md:text-3xl text-center">
 							Personal Details
 						</h4>
-						{confirmedDetails ? (
+						{confirmedDetails && bookingDetails.status === "pending" ? (
 							<div className="relative overflow-x-auto">
 								<table className=" w-full  mt-10 text-sm text-left rtl:text-right text-gray-500">
 									<thead className="text-xs text-white uppercase bg-gray-600">

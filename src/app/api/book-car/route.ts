@@ -2,6 +2,7 @@ import dbConnect from "@/database/dbConfig";
 import Booking from "@/models/Booking";
 import { NextRequest, NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
+import { getDataFromToken } from "@/helpers/getUserToken";
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -34,8 +35,9 @@ export const POST = async (request: NextRequest) => {
 export const GET = async (request: NextRequest) => {
     try {
         await dbConnect();
+        const userId = await getDataFromToken(request);
 
-        const bookings = await Booking.find();
+        const bookings = await Booking.find({ userId });
 
         if (bookings.length === 0) {
             return NextResponse.json({ message: "No bookings found", result: false }, { status: 404 });

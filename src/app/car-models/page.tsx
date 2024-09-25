@@ -19,6 +19,7 @@ const CarModels: React.FC = () => {
 							key={index}
 							className="border rounded-lg shadow-lg p-3 overflow-hidden">
 							<img
+								loading="lazy"
 								src={car.image}
 								alt={`${car.make} ${car.model}`}
 								className="w-full rounded-lg h-96 object-cover"
