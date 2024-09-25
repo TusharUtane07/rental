@@ -223,7 +223,7 @@ const ConfirmBooking: React.FC<ConfirmBookingProps> = ({ params }) => {
 	}
 
 	if (!bookingDetails) {
-		return <p>No booking details found.</p>;
+		return <Loader />;
 	}
 
 	return (

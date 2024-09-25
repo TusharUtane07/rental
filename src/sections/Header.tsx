@@ -5,6 +5,9 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { usePathname } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { signOut } from "@/redux/authSlice";
 const Header = () => {
 	const [nav, setNav] = useState(false);
 	const [userName, setUserName] = useState<string>("");
@@ -13,6 +16,10 @@ const Header = () => {
 	};
 
 	const pathname = usePathname();
+	const dispatch = useDispatch();
+	const isAuthenticated = useSelector(
+		(state: RootState) => state.auth.isAuthenticated
+	);
 
 	const navItems = [
 		{ id: 1, text: "Home", link: "/" },
@@ -35,13 +42,13 @@ const Header = () => {
 		}
 	};
 
-	const signOut = async () => {
+	const LogOut = async () => {
 		try {
 			const response = await axiosInstance.get("/api/logout/");
 			const data = response.data;
 			if (data.result) {
 				toast.success("Logout Successfully");
-				window.location.reload();
+				dispatch(signOut());
 			}
 		} catch (error: any) {
 			toast.error(error.message);
@@ -50,7 +57,7 @@ const Header = () => {
 
 	useEffect(() => {
 		getUserDetails();
-	}, [userName]);
+	}, [userName, isAuthenticated]);
 
 	return (
 		<div className="fixed top-0 left-0 right-0 backdrop-blur-2xl shadow-md z-50">
@@ -72,11 +79,11 @@ const Header = () => {
 					))}
 				</ul>
 				<div className="font-bold capitalize md:flex hidden">
-					{userName ? (
+					{isAuthenticated ? (
 						<div className="flex items-center gap-3">
 							<p>Hi, {userName}</p>{" "}
 							<button
-								onClick={signOut}
+								onClick={LogOut}
 								className="bg-gray-600 px-3 py-2 text-white rounded-full">
 								Logout
 							</button>
@@ -118,11 +125,11 @@ const Header = () => {
 					</Link>
 				))}
 				<div className="font-bold capitalize md:hidden flex">
-					{userName ? (
+					{isAuthenticated ? (
 						<div className="flex items-center flex-col mt-5 gap-3">
 							<p>Hi, {userName}</p>{" "}
 							<button
-								onClick={signOut}
+								onClick={LogOut}
 								className="bg-gray-600 px-8 py-2 text-white rounded-full">
 								Logout
 							</button>
