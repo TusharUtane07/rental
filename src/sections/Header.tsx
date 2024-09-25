@@ -81,7 +81,6 @@ const Header = () => {
 				<div className="font-bold capitalize md:flex hidden">
 					{isAuthenticated ? (
 						<div className="flex items-center gap-3">
-							<p>Hi, {userName}</p>{" "}
 							<button
 								onClick={LogOut}
 								className="bg-gray-600 px-3 py-2 text-white rounded-full">
@@ -127,7 +126,6 @@ const Header = () => {
 				<div className="font-bold capitalize md:hidden flex">
 					{isAuthenticated ? (
 						<div className="flex items-center flex-col mt-5 gap-3">
-							<p>Hi, {userName}</p>{" "}
 							<button
 								onClick={LogOut}
 								className="bg-gray-600 px-8 py-2 text-white rounded-full">

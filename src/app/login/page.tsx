@@ -19,6 +19,25 @@ const SignIn: React.FC = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const [errors, setErrors] = useState<Partial<LogInFormData>>({});
+	const [loadingGuest, setLoadingGuest] = useState<boolean>(false);
+	const signInWithGuestId = async () => {
+		try {
+			const response = await axiosInstance.post("/api/guest-login/");
+			const data = await response.data;
+
+			if (data.result) {
+				toast.success("Guest Signed in Successfully");
+				dispatch(signIn());
+				router.push("/");
+			}
+		} catch (error: any) {
+			if (error.response && error.response.data) {
+				toast.error("Guest Sign in Error");
+			}
+		} finally {
+			setLoadingGuest(false);
+		}
+	};
 
 	const router = useRouter();
 	const dispatch = useDispatch();
@@ -161,6 +180,15 @@ const SignIn: React.FC = () => {
 								{loading ? "logging in..." : "Login"}
 							</button>
 						</div>
+						<button
+							type="button"
+							onClick={signInWithGuestId}
+							className={`w-full my-2 flex justify-center py-2 px-4 border  text-sm font-medium rounded-md bg-indigo-50 text-gray-600 transition-all duration-500 hover:bg-indigo-100 ease-in-out ${
+								loadingGuest ? "opacity-50 cursor-not-allowed" : ""
+							}`}
+							disabled={loadingGuest}>
+							{loadingGuest ? "logging in..." : "Continue as Guest"}
+						</button>
 					</form>
 
 					<div className="mt-6 text-center">

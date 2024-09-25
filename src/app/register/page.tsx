@@ -1,9 +1,11 @@
 "use client";
 import axiosInstance from "@/lib/axios";
+import { signIn } from "@/redux/authSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 interface RegisterFormData {
 	username: string;
@@ -19,6 +21,8 @@ const Register = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const [errors, setErrors] = useState<Partial<RegisterFormData>>({});
+	const [loadingGuest, setLoadingGuest] = useState<boolean>(false);
+
 	const router = useRouter();
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +97,27 @@ const Register = () => {
 			}
 		} catch (error: any) {
 			console.log(error.message);
+		}
+	};
+
+	const dispatch = useDispatch();
+
+	const signInWithGuestId = async () => {
+		try {
+			const response = await axiosInstance.post("/api/guest-login/");
+			const data = await response.data;
+
+			if (data.result) {
+				toast.success("Guest Signed in Successfully");
+				dispatch(signIn());
+				router.push("/");
+			}
+		} catch (error: any) {
+			if (error.response && error.response.data) {
+				toast.error("Guest Sign in Error");
+			}
+		} finally {
+			setLoadingGuest(false);
 		}
 	};
 
@@ -182,6 +207,15 @@ const Register = () => {
 								}`}
 								disabled={loading}>
 								{loading ? "Registering..." : "Register"}
+							</button>
+							<button
+								type="button"
+								onClick={signInWithGuestId}
+								className={`w-full my-2 flex justify-center py-2 px-4 border  text-sm font-medium rounded-md bg-gray-50 text-gray-600 transition-all duration-500 hover:bg-indigo-100 ease-in-out ${
+									loadingGuest ? "opacity-50 cursor-not-allowed" : ""
+								}`}
+								disabled={loadingGuest}>
+								{loadingGuest ? "Signing in..." : "Continue as Guest"}
 							</button>
 						</div>
 					</form>

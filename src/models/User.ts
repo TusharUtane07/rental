@@ -24,7 +24,6 @@ const UserSchema = new Schema<User>({
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
     },
     isAdmin: {
         type: Boolean,
