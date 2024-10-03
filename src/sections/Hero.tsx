@@ -6,12 +6,12 @@ const Hero = () => {
 		<section className="pt-28 lg:pt-32  bg-center bg-cover">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative text-center">
 				<h1 className="max-w-2xl mx-auto text-center font-manrope font-bold text-4xl text-gray-900 mb-5 md:text-5xl leading-[50px]">
-					Control your Finances with our
-					<span className="text-gray-600"> Smart Tool </span>
+					Rent the Perfect Car Anytime, Anywhere with
+					<span className="text-gray-600"> Next Ride </span>
 				</h1>
 				<p className="max-w-sm mx-auto text-center text-base font-normal leading-7 text-gray-500 mb-9">
-					Invest intelligently and discover a better way to manage your entire
-					wealth easily.
+					Discover a seamless car rental experience with NextRide. Choose from a
+					wide range of vehicles.
 				</p>
 				<Link
 					href="/register"
